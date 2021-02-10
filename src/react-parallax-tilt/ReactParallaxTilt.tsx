@@ -234,6 +234,7 @@ class ReactParallaxTilt extends PureComponent<Props> {
 
     if (this.props.reset) {
       const autoResetEvent = new CustomEvent<CustomEventType>('autoreset' as CustomEventType);
+      this.containerElement!.style.clipPath = 'polygon(0 0,100% 0,100% 100%,0,100%)';
       this.onMove(autoResetEvent);
     }
   };
@@ -410,6 +411,7 @@ class ReactParallaxTilt extends PureComponent<Props> {
   private setTransitions() {
     const { transitionSpeed, transitionEasing } = this.props;
     setTransition<HTMLDivElement>(this.wrapperEl.node!, 'all', transitionSpeed!, transitionEasing!);
+    setTransition<HTMLDivElement>(this.containerElement!, 'all', transitionSpeed!, transitionEasing!);
 
     if (this.glare) {
       setTransition<HTMLDivElement>(this.glare.glareEl, 'opacity', transitionSpeed!, transitionEasing!);
