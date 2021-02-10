@@ -13,6 +13,7 @@ export const defaultProps: Props = {
   transitionSpeed: 400,
   trackOnWindow: false,
   gyroscope: false,
+  overflowHidden: false,
   ...defaultTiltProps,
   ...defaultGlareProps,
 };

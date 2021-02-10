@@ -9,6 +9,7 @@ import { Props, SupportedEvent, EventType, CustomEventType, WrapperElement } fro
 
 class ReactParallaxTilt extends PureComponent<Props> {
   public static defaultProps = defaultProps;
+  private containerElement: HTMLDivElement | null = null;
   private wrapperEl: WrapperElement<HTMLDivElement> = {
     node: null,
     size: {
@@ -355,6 +356,28 @@ class ReactParallaxTilt extends PureComponent<Props> {
       this.tilt!.tiltAngleY += 180;
     }
   };
+  private hideOverflow() {
+    if (this.containerElement) {
+      let handles = [
+        ...(((this.containerElement.getElementsByClassName('handle') ||
+          []) as unknown) as Array<HTMLDivElement>),
+      ];
+      let elementRect = this.containerElement.getBoundingClientRect();
+
+      this.containerElement.style.clipPath =
+        'polygon(' +
+        handles.map((handle) => {
+          let handleRect = handle.getBoundingClientRect();
+          return (
+            (100 * (handleRect.x - elementRect.x)) / elementRect.width +
+            '% ' +
+            (100 * (handleRect.y - elementRect.y)) / elementRect.height +
+            '%'
+          );
+        }) +
+        ')';
+    }
+  }
 
   public renderFrame = (): void => {
     this.resetWrapperElTransform();
@@ -365,6 +388,7 @@ class ReactParallaxTilt extends PureComponent<Props> {
     if (this.glare) {
       this.glare.render(this.props);
     }
+    if (this.props.overflowHidden) this.hideOverflow();
   };
 
   private resetWrapperElTransform(): void {
@@ -395,18 +419,57 @@ class ReactParallaxTilt extends PureComponent<Props> {
   public render() {
     const { children, className, style } = this.props;
     return (
-      <div
-        ref={(el) => (this.wrapperEl.node = el)}
-        onMouseEnter={this.onEnter}
-        onMouseMove={this.onMove}
-        onMouseLeave={this.onLeave}
-        onTouchStart={this.onEnter}
-        onTouchMove={this.onMove}
-        onTouchEnd={this.onLeave}
-        className={className}
-        style={style}
-      >
-        {children}
+      <div ref={(el) => (this.containerElement = el)}>
+        <div
+          ref={(el) => (this.wrapperEl.node = el)}
+          onMouseEnter={this.onEnter}
+          onMouseMove={this.onMove}
+          onMouseLeave={this.onLeave}
+          onTouchStart={this.onEnter}
+          onTouchMove={this.onMove}
+          onTouchEnd={this.onLeave}
+          className={className}
+          style={style}
+        >
+          <div
+            className={'handle'}
+            style={{ position: 'absolute', width: '0', height: '0', background: 'none', left: '0', top: '0' }}
+          ></div>
+          <div
+            className={'handle'}
+            style={{
+              position: 'absolute',
+              width: '0',
+              height: '0',
+              background: 'none',
+              right: '0',
+              top: '0',
+            }}
+          ></div>
+          <div
+            className={'handle'}
+            style={{
+              position: 'absolute',
+              width: '0',
+              height: '0',
+              background: 'none',
+              right: '0',
+              bottom: '0',
+            }}
+          ></div>
+          <div
+            className={'handle'}
+            style={{
+              position: 'absolute',
+              width: '0',
+              height: '0',
+              background: 'none',
+              left: '0',
+              bottom: '0',
+            }}
+          ></div>
+          {children}
+        </div>
       </div>
     );
   }

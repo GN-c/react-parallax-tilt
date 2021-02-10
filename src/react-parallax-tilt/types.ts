@@ -42,6 +42,10 @@ export interface Props extends TiltProps, GlareProps, React.HTMLAttributes<HTMLD
    */
   gyroscope?: boolean;
   /**
+   * Boolean to enable/disable overflow.
+   */
+  overflowHidden?: boolean;
+  /**
    * Gets triggered when user moves on the component.
    */
   onMove?: (
